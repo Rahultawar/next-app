@@ -25,6 +25,7 @@ import {
   writeTextFile,
 } from "../utils/runtime-fs.js";
 import { toValidPackageName } from "../utils/project-name.js";
+import { spawnCommand } from "../utils/spawn.js";
 
 import type { CreateCommandOptions } from "../types/cli.js";
 
@@ -593,41 +594,7 @@ function shouldCopyAddonPath(addonFilesDirectory: string, sourcePath: string): b
 }
 
 function runScaffoldCommand(command: string, args: readonly string[], cwd: string): Promise<void> {
-  return new Promise((resolvePromise, rejectPromise) => {
-    let child: ReturnType<typeof Bun.spawn>;
-
-    try {
-      child = Bun.spawn([command, ...args], {
-        cwd,
-        env: process.env,
-        stdin: "ignore",
-        stdout: "inherit",
-        stderr: "inherit",
-      });
-    } catch (error) {
-      const reason = error instanceof Error ? error.message : "Unknown spawn error";
-      rejectPromise(new Error(`Failed to run "${command}": ${reason}`));
-      return;
-    }
-
-    child.exited
-      .then((code) => {
-        if (code === 0) {
-          resolvePromise();
-          return;
-        }
-
-        rejectPromise(
-          new Error(
-            `Command "${[command, ...args].join(" ")}" failed with exit code ${code ?? "unknown"}.`,
-          ),
-        );
-      })
-      .catch((error: unknown) => {
-        const reason = error instanceof Error ? error.message : "Unknown spawn error";
-        rejectPromise(new Error(`Failed to run "${command}": ${reason}`));
-      });
-  });
+  return spawnCommand(command, args, cwd);
 }
 
 type TemplateSymlink = {
