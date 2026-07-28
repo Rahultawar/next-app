@@ -22,7 +22,7 @@
   "dependencies": {
     "@elysiajs/eden": "^1.4.9",
     "drizzle-orm": "^0.45.2",
-    "elysia": "^1.4.28",
+    "elysia": "^1.4.29",
     "effect": "^3.21.2",
     "postgres": "^3.4.9"
   },

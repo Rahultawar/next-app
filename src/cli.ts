@@ -1,11 +1,11 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import pc from "picocolors";
 import { CliUsageError, getCliHelpText, parseCliArgs, type CreateCliOptions } from "./cli-args.js";
 import { runCreateCommand } from "./commands/create.js";
 import { runListTemplatesCommand } from "./commands/list-templates.js";
 import { runInteractiveMode } from "./ui/interactive.js";
-import { killActiveProcesses } from "./utils/package-manager.js";
+import { killActiveProcesses } from "./utils/spawn.js";
 import type { PackageManager } from "./types/package-manager.js";
 
 import packageJson from "../package.json" with { type: "json" };
@@ -66,7 +66,7 @@ process.on("SIGTERM", () => {
 
 async function main(): Promise<void> {
   try {
-    const parsedCommand = parseCliArgs(Bun.argv.slice(2));
+    const parsedCommand = parseCliArgs(process.argv.slice(2));
 
     if (parsedCommand.kind === "help") {
       console.log(getCliHelpText(packageVersion));
